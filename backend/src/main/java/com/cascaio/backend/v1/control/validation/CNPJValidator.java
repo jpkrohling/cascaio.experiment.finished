@@ -17,6 +17,6 @@ public class CNPJValidator implements ConstraintValidator<CNPJ, String> {
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		return value == null
 				|| value.isEmpty()
-				||  value.matches("/^[0-9]{8}$/");
+				||  value.matches("^\\d{14}$");
 	}
 }

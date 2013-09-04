@@ -17,6 +17,6 @@ public class BankleitzahlValidator implements ConstraintValidator<Bankleitzahl, 
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		return value == null
 				|| value.isEmpty()
-				||  value.matches("/^[0-9]{8}$/");
+				|| value.matches("^\\d{8}$");
 	}
 }

@@ -19,15 +19,12 @@ public class FinancialInstitution extends NamedCascaioEntity {
 
 	private String codCompensacao; // Brazilian Codigo de Compensacao
 
-	@NotNull
 	@CNPJ
 	private String cnpj; // Brazilian CNPJ
 
-	@NotNull
 	@Bankleitzahl
 	private String bankleitzahl; // German BLZ
 
-	@NotNull
 	@BIC
 	private String bic; // as per ISO 9362
 

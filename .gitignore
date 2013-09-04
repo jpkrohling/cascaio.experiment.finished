@@ -1,3 +1,5 @@
 *iml
 properties/*.properties
 *sql
+target
+.idea

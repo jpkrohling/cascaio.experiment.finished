@@ -17,6 +17,6 @@ public class BICValidator implements ConstraintValidator<BIC, String> {
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		return value == null
 				|| value.isEmpty()
-				||  value.matches("/^[0-9]{11}$/");
+				||  value.matches("^\\w{11}$");
 	}
 }
