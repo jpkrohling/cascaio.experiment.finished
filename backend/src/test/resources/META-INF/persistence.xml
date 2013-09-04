@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+			 xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xsi:schemaLocation="
+		http://java.sun.com/xml/ns/persistence
+		http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="backend-unittest-pu">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jar-file>${project.build.outputDirectory}</jar-file>
+		<properties>
+			<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:cascaio-backend"/>
+			<property name="javax.persistence.jdbc.user" value="sa"/>
+			<property name="javax.persistence.jdbc.password" value=""/>
+
+			<!-- Properties for Hibernate -->
+			<property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+			<property name="hibernate.show_sql" value="true"/>
+
+			<!-- Auto registration of joda-time and joda-money types -->
+			<property name="jadira.usertype.autoRegisterUserTypes" value="true"/>
+		</properties>
+	</persistence-unit>
+</persistence>
