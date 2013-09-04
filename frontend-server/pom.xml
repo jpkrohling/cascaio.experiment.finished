@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.cascaio</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.1-SNAPSHOT</version>
+	</parent>
+
+	<name>Cascaio - Front End</name>
+	<artifactId>frontend-server</artifactId>
+	<packaging>war</packaging>
+
+	<description>
+		Knows how to convert user queries into API calls. Broker between the web front end and the backend.
+	</description>
+
+</project>
+
