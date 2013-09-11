@@ -125,7 +125,7 @@ public class ExchangeRateService {
 
 		if (null != sCurrencyFrom && !sCurrencyFrom.isEmpty()) exchangeRate.setCurrencyFrom(CurrencyUnit.of(sCurrencyFrom));
 		if (null != sCurrencyTo && !sCurrencyTo.isEmpty()) exchangeRate.setCurrencyTo(CurrencyUnit.of(sCurrencyTo));
-		if (null != sRate && !sRate.isEmpty()) exchangeRate.setRate(new BigDecimal(sRate));
+		if (null != sRate && !sRate.isEmpty()) exchangeRate.setPrice(new BigDecimal(sRate));
 		if (null != sDate && !sDate.isEmpty()) exchangeRate.setDate(DateMidnight.parse(sDate, inputDateFormat).toDateTime());
 
 		entityManager.persist(exchangeRate);

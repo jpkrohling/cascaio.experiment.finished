@@ -43,7 +43,7 @@ public class ExchangeRateServiceTest {
 
 		assertEquals(CurrencyUnit.EUR, rate.getCurrencyFrom());
 		assertEquals(CurrencyUnit.USD, rate.getCurrencyTo());
-		assertEquals(new BigDecimal("1.2786"), rate.getRate());
+		assertEquals(new BigDecimal("1.2786"), rate.getPrice());
 		assertEquals(new DateMidnight(2013, 7, 8, DateTimeZone.UTC).toDateTime(), rate.getDate());
 	}
 

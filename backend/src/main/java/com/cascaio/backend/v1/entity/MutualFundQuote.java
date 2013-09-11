@@ -1,10 +1,13 @@
 package com.cascaio.backend.v1.entity;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * User: jpkrohling
@@ -15,18 +18,18 @@ import java.math.BigDecimal;
 public class MutualFundQuote extends Quote {
 
 	@ManyToOne
+	@JsonIgnore
 	private MutualFund mutualFund;
 
 	// JPA happy
 	protected MutualFundQuote() {
 	}
 
-	public MutualFundQuote(LocalDate date, BigDecimal price, MutualFund mutualFund) {
-		super(date, price);
-		this.mutualFund = mutualFund;
+	protected MutualFundQuote(DateTime date, BigDecimal price, MutualFund mutualFund) {
+		this(UUID.randomUUID().toString(), date, price, mutualFund);
 	}
 
-	public MutualFundQuote(String id, LocalDate date, BigDecimal price, MutualFund mutualFund) {
+	protected MutualFundQuote(String id, DateTime date, BigDecimal price, MutualFund mutualFund) {
 		super(id, date, price);
 		this.mutualFund = mutualFund;
 	}

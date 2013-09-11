@@ -1,13 +1,16 @@
 package com.cascaio.backend.v1.entity;
 
 import org.joda.money.CurrencyUnit;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * User: jpkrohling
@@ -17,12 +20,14 @@ import java.util.List;
 @Entity
 public class MutualFund extends NamedCascaioEntity {
 
+	@NotNull
 	@Column(unique = true, length = 12)
 	private String isin;
 
 	@Column(length = 6)
 	private String wkn;
 
+	@NotNull
 	@Column(length = 3)
 	private CurrencyUnit currency;
 
@@ -32,13 +37,13 @@ public class MutualFund extends NamedCascaioEntity {
 	protected MutualFund() {
 	}
 
-	public MutualFund(String name, CurrencyUnit currency) {
-		super(name);
-		this.currency = currency;
+	public MutualFund(String name, String isin, CurrencyUnit currency) {
+		this(UUID.randomUUID().toString(), name, isin, currency);
 	}
 
-	public MutualFund(String id, String name, CurrencyUnit currency) {
+	public MutualFund(String id, String name, String isin, CurrencyUnit currency) {
 		super(id, name);
+		this.isin = isin;
 		this.currency = currency;
 	}
 
@@ -46,7 +51,29 @@ public class MutualFund extends NamedCascaioEntity {
 		return Collections.unmodifiableList(quotes);
 	}
 
-	public void addQuote(LocalDate date, BigDecimal price) {
-		this.quotes.add(new MutualFundQuote(date, price, this));
+	public MutualFundQuote addQuote(DateTime date, BigDecimal price) {
+		MutualFundQuote quote = new MutualFundQuote(date, price, this);
+		this.quotes.add(quote);
+		return quote;
+	}
+
+	public String getIsin() {
+		return isin;
+	}
+
+	public String getWkn() {
+		return wkn;
+	}
+
+	public void setWkn(String wkn) {
+		this.wkn = wkn;
+	}
+
+	public CurrencyUnit getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(CurrencyUnit currency) {
+		this.currency = currency;
 	}
 }

@@ -17,7 +17,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"currencyFrom", "currencyTo", "date"})})
-public class ExchangeRate extends CascaioEntity {
+public class ExchangeRate extends Quote {
 
 	@NotNull
 	private CurrencyUnit currencyFrom;
@@ -25,18 +25,10 @@ public class ExchangeRate extends CascaioEntity {
 	@NotNull
 	private CurrencyUnit currencyTo;
 
-	@NotNull
-	@Column(precision = 19, scale = 6)
-	private BigDecimal rate;
-
-	@NotNull
-	private DateTime date;
-
 	public ExchangeRate(CurrencyUnit currencyFrom, CurrencyUnit currencyTo, BigDecimal rate, DateTime date) {
+		super(date, rate);
 		this.currencyFrom = currencyFrom;
 		this.currencyTo = currencyTo;
-		this.rate = rate;
-		this.date = date;
 	}
 
 	// JPA Happy
@@ -59,29 +51,13 @@ public class ExchangeRate extends CascaioEntity {
 		this.currencyTo = currencyTo;
 	}
 
-	public BigDecimal getRate() {
-		return rate;
-	}
-
-	public void setRate(BigDecimal rate) {
-		this.rate = rate;
-	}
-
-	public DateTime getDate() {
-		return date;
-	}
-
-	public void setDate(DateTime date) {
-		this.date = date;
-	}
-
 	@Override
 	public String toString() {
 		return "ExchangeRate{" +
 				"currencyFrom=" + currencyFrom +
 				", currencyTo=" + currencyTo +
-				", rate=" + rate +
-				", date=" + date +
+				", rate=" + this.getPrice() +
+				", date=" + this.getDate() +
 				'}';
 	}
 }

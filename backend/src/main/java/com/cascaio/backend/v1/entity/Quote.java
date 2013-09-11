@@ -1,7 +1,9 @@
 package com.cascaio.backend.v1.entity;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -15,21 +17,22 @@ import java.math.BigDecimal;
 public class Quote extends CascaioEntity {
 
 	@NotNull
-	private LocalDate date;
+	private DateTime date;
 
 	@NotNull
+	@Column(precision = 19, scale = 6)
 	private BigDecimal price;
 
 	// JPA happy
 	protected Quote() {
 	}
 
-	public Quote(LocalDate date, BigDecimal price) {
+	public Quote(DateTime date, BigDecimal price) {
 		this.date = date;
 		this.price = price;
 	}
 
-	public Quote(String id, LocalDate date, BigDecimal price) {
+	public Quote(String id, DateTime date, BigDecimal price) {
 		super(id);
 		this.date = date;
 		this.price = price;
@@ -43,11 +46,11 @@ public class Quote extends CascaioEntity {
 		this.price = price;
 	}
 
-	public LocalDate getDate() {
+	public DateTime getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDate date) {
+	public void setDate(DateTime date) {
 		this.date = date;
 	}
 }
