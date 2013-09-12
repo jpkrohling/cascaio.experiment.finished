@@ -143,28 +143,40 @@ public class TOTP {
 		return result;
 	}
 
-	protected static String getForKeyAndTime(String key, long time) {
+	protected static String getForKeyAndTime(String key, long timeSlot) {
 		String steps;
-		steps = Long.toHexString(time).toUpperCase();
+		steps = Long.toHexString(timeSlot).toUpperCase();
 		while (steps.length() < 16) steps = "0" + steps;
 		return generateTOTP512(key, steps, 8);
 	}
 
+	public static String currentTOTPForKey(String key, long time) {
+		long timeSlot = time / 1000;
+		return getForKeyAndTime(key, timeSlot);
+	}
+
 	public static String currentTOTPForKey(String key) {
-		long time = getCurrentDateAndTime() / 1000;
-		return getForKeyAndTime(key, time);
+		return currentTOTPForKey(key, getCurrentDateAndTime());
+	}
+
+	public static String nextTOTPForKey(String key, long time) {
+		long timeSlot = time / 1000;
+		timeSlot++;
+		return getForKeyAndTime(key, timeSlot);
 	}
 
 	public static String nextTOTPForKey(String key) {
-		long time = getCurrentDateAndTime() / 1000;
-		time++;
-		return getForKeyAndTime(key, time);
+		return nextTOTPForKey(key, getCurrentDateAndTime());
+	}
+
+	public static String previousTOTPForKey(String key, long time) {
+		long timeSlot = time / 1000;
+		timeSlot--;
+		return getForKeyAndTime(key, timeSlot);
 	}
 
 	public static String previousTOTPForKey(String key) {
-		long time = getCurrentDateAndTime() / 1000;
-		time--;
-		return getForKeyAndTime(key, time);
+		return previousTOTPForKey(key, getCurrentDateAndTime());
 	}
 
 	protected static long getCurrentDateAndTime() {

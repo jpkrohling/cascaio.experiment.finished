@@ -58,34 +58,34 @@ public class AppServiceUnitTest {
 
 	@Test
 	public void testAppCanBeFound() {
-		Response response = appService.get(accessKey, TOTP.currentTOTPForKey(secretKey));
+		Response response = appService.get(accessKey, TOTP.currentTOTPForKey(secretKey), System.currentTimeMillis());
 		assertEquals("We expect to get a 200 when finding a match", 200, response.getStatus());
 	}
 
 	@Test
 	public void testAppCannotBeFound() {
-		Response response = appService.get("non-existing-key", TOTP.currentTOTPForKey(secretKey));
+		Response response = appService.get("non-existing-key", TOTP.currentTOTPForKey(secretKey), System.currentTimeMillis());
 		assertEquals("We expect to get a 404 when not finding a match", 404, response.getStatus());
 	}
 
 	@Test
 	public void testWrongToken() {
-		Response response = appService.get(accessKey, TOTP.currentTOTPForKey(KeyGenerator.generate()));
+		Response response = appService.get(accessKey, TOTP.currentTOTPForKey(KeyGenerator.generate()), System.currentTimeMillis());
 		assertEquals("We expect to get a 401 when the token is not a match", 401, response.getStatus());
 	}
 
 	@Test
 	public void testBadRequestWithNulls() {
-		Response response = appService.get(null, TOTP.currentTOTPForKey(secretKey));
+		Response response = appService.get(null, TOTP.currentTOTPForKey(secretKey), System.currentTimeMillis());
 		assertEquals("We expect to get a 400 when sending the access key as null", 400, response.getStatus());
 
-		response = appService.get("", TOTP.currentTOTPForKey(secretKey));
+		response = appService.get("", TOTP.currentTOTPForKey(secretKey), System.currentTimeMillis());
 		assertEquals("We expect to get a 400 when sending the access key as empty", 400, response.getStatus());
 
-		response = appService.get(accessKey, null);
+		response = appService.get(accessKey, null, System.currentTimeMillis());
 		assertEquals("We expect to get a 400 when sending the secret key as null", 400, response.getStatus());
 
-		response = appService.get(accessKey, "");
+		response = appService.get(accessKey, "", System.currentTimeMillis());
 		assertEquals("We expect to get a 400 when sending the secret key as empty", 400, response.getStatus());
 	}
 

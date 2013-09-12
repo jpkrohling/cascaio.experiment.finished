@@ -51,6 +51,8 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 
 	@Override
 	public ServerResponse preProcess(HttpRequest request, ResourceMethod method) throws Failure, WebApplicationException {
+		long timeRequestStarted = System.currentTimeMillis();
+
 		// is the requester trying to access a reference data endpoint, or user data endpoint?
 		boolean requiresReferenceDataPermission = false;
 		Annotation[] annotations = method.getResourceClass().getDeclaredAnnotations();
@@ -60,7 +62,7 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 			}
 		}
 
-		Application application = retrieveApplication(request);
+		Application application = retrieveApplication(request, timeRequestStarted);
 		if (null == application) {
 			logger.trace("Couldn't determine what is the application in use for this request.");
 			return ServerResponse.copyIfNotServerResponse(Response.status(Response.Status.UNAUTHORIZED).build());
@@ -92,7 +94,7 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 		return ServerResponse.copyIfNotServerResponse(Response.status(Response.Status.FORBIDDEN).build());
 	}
 
-	private Application retrieveApplication(HttpRequest request) {
+	private Application retrieveApplication(HttpRequest request, long time) {
 
 		String accessKey = getValueForHeader(request, "X-Cascaio-AccessKey");
 		String token = getValueForHeader(request, "X-Cascaio-Token");
@@ -106,7 +108,8 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 		req
 				.header("X-Cascaio-AccessKey", properties.getProperty("cascaio.backend.appinfo.accesskey"))
 				.pathParameter("accessKey", accessKey)
-				.queryParameter("token", token);
+				.queryParameter("token", token)
+				.queryParameter("time", time);
 
 		ClientResponse<Application> res = null;
 		try {
@@ -122,6 +125,9 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 			} else {
 				logger.warn("Authentication failed. Response code: {}", res.getStatus());
 			}
+
+			logger.trace("Releasing the ClientRequest connection");
+			res.releaseConnection();
 		}
 
 		logger.error("Response's entity is null");

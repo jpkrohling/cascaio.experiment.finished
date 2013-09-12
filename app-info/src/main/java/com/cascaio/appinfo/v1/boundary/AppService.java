@@ -52,7 +52,9 @@ public class AppService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{accessKey}")
-	public Response get(@PathParam("accessKey") String accessKey, @QueryParam("token") String token) {
+	public Response get(@PathParam("accessKey") String accessKey,
+						@QueryParam("token") String token,
+						@QueryParam("time") long time) {
 
 		if (null == accessKey || accessKey.isEmpty()) {
 			return Response.status(Response.Status.BAD_REQUEST).build();
@@ -67,7 +69,7 @@ public class AppService {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 
-		if (!isValidTOTP(application.getSecretKey(), token)) {
+		if (!isValidTOTP(application.getSecretKey(), token, time)) {
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
 
@@ -121,9 +123,9 @@ public class AppService {
      * @param token The TOTP-based token
      * @return true when the token is a valid token for the secret key
      */
-	private boolean isValidTOTP(String secretKey, String token) {
-		String current = TOTP.currentTOTPForKey(secretKey);
-		String previous = TOTP.previousTOTPForKey(secretKey);
+	private boolean isValidTOTP(String secretKey, String token, long time) {
+		String current = TOTP.currentTOTPForKey(secretKey, time);
+		String previous = TOTP.previousTOTPForKey(secretKey, time);
 
 		if (current.equals(token) || previous.equals(token)) {
 			return true;
