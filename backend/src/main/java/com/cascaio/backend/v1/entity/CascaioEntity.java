@@ -53,4 +53,13 @@ public abstract class CascaioEntity {
 	public DateTime getLastModifiedAt() {
 		return this.getUpdatedAt();
 	}
+
+	@Override
+	public String toString() {
+		return "CascaioEntity{" +
+				"id='" + id + '\'' +
+				", createdAt=" + createdAt +
+				", updatedAt=" + updatedAt +
+				'}';
+	}
 }

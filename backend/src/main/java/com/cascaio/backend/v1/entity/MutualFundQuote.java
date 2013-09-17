@@ -37,4 +37,30 @@ public class MutualFundQuote extends Quote {
 	public MutualFund getMutualFund() {
 		return mutualFund;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof MutualFundQuote)) return false;
+
+		MutualFundQuote that = (MutualFundQuote) o;
+
+		if (mutualFund != null ? !mutualFund.equals(that.mutualFund) : that.mutualFund != null) return false;
+		return super.equals(o);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = getMutualFund().hashCode();
+		result = 31 * result + super.hashCode();
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "MutualFundQuote{" +
+				"mutualFund=" + mutualFund +
+				"quote=" + super.toString() +
+				'}';
+	}
 }

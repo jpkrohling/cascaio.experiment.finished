@@ -119,14 +119,12 @@ public class ExchangeRateService {
 	public ExchangeRate update(@PathParam("id") String id,
 							   @Currency @FormParam("currencyFrom") String sCurrencyFrom,
 							   @Currency @FormParam("currencyTo") String sCurrencyTo,
-							   @NumericRate @FormParam("rate") String sRate,
-							   @ISODate @FormParam("date") String sDate) {
+							   @NumericRate @FormParam("rate") String sRate) {
 		ExchangeRate exchangeRate = get(id);
 
 		if (null != sCurrencyFrom && !sCurrencyFrom.isEmpty()) exchangeRate.setCurrencyFrom(CurrencyUnit.of(sCurrencyFrom));
 		if (null != sCurrencyTo && !sCurrencyTo.isEmpty()) exchangeRate.setCurrencyTo(CurrencyUnit.of(sCurrencyTo));
 		if (null != sRate && !sRate.isEmpty()) exchangeRate.setPrice(new BigDecimal(sRate));
-		if (null != sDate && !sDate.isEmpty()) exchangeRate.setDate(DateMidnight.parse(sDate, inputDateFormat).toDateTime());
 
 		entityManager.persist(exchangeRate);
 		logger.trace("Updated the exchange rate with ID {}", id);

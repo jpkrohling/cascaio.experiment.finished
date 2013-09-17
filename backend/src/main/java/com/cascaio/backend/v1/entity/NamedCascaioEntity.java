@@ -32,4 +32,27 @@ public abstract class NamedCascaioEntity extends CascaioEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof NamedCascaioEntity)) return false;
+
+		NamedCascaioEntity that = (NamedCascaioEntity) o;
+
+		return name.equals(that.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return "NamedCascaioEntity{" +
+				"name='" + name + '\'' +
+				"entity='" + super.toString() + '\'' +
+				'}';
+	}
 }

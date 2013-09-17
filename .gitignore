@@ -1,5 +1,6 @@
 *iml
 properties/*.properties
+cascaio.properties
 *sql
 target
 .idea

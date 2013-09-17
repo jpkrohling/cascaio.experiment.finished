@@ -47,7 +47,7 @@ public class FinancialInstitutionServiceTest {
 		entityManager.clear();
 
 		FinancialInstitution fromDatabase = entityManager.find(FinancialInstitution.class, fromService.getId());
-		assertFromServiceIsEqualsToFromDatabase(fromService, fromDatabase);
+		assertEquals(fromService, fromDatabase);
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class FinancialInstitutionServiceTest {
 		entityManager.clear();
 
 		FinancialInstitution fromDatabase = entityManager.find(FinancialInstitution.class, fromService.getId());
-		assertFromServiceIsEqualsToFromDatabase(fromService, fromDatabase);
+		assertEquals(fromService, fromDatabase);
 	}
 
 	@Test
@@ -79,7 +79,7 @@ public class FinancialInstitutionServiceTest {
 
 		FinancialInstitution fromDatabase = entityManager.find(FinancialInstitution.class, fromService.getId());
 
-		assertFromServiceIsEqualsToFromDatabase(fromService, fromDatabase);
+		assertEquals(fromService, fromDatabase);
 		assertEquals("changed-codCompensacao", fromService.getCodCompensacao());
 	}
 
@@ -94,7 +94,7 @@ public class FinancialInstitutionServiceTest {
 
 		FinancialInstitution fromDatabase = entityManager.find(FinancialInstitution.class, fromService.getId());
 
-		assertFromServiceIsEqualsToFromDatabase(fromService, fromDatabase);
+		assertEquals(fromService, fromDatabase);
 		assertEquals("changed-codCompensacao-2", fromService.getCodCompensacao());
 	}
 
@@ -131,7 +131,7 @@ public class FinancialInstitutionServiceTest {
 		entityManager.clear();
 
 		FinancialInstitution fromDatabase = entityManager.find(FinancialInstitution.class, id);
-		assertFromServiceIsEqualsToFromDatabase(fromService, fromDatabase);
+		assertEquals(fromService, fromDatabase);
 		assertNotNull(fromService.getName());
 	}
 
@@ -154,14 +154,4 @@ public class FinancialInstitutionServiceTest {
 		entityManager.clear();
 		return created;
 	}
-
-	private void assertFromServiceIsEqualsToFromDatabase(FinancialInstitution fromService, FinancialInstitution fromDatabase) {
-		assertEquals(fromService.getName(), fromDatabase.getName());
-		assertEquals(fromService.getCnpj(), fromDatabase.getCnpj());
-		assertEquals(fromService.getBankleitzahl(), fromDatabase.getBankleitzahl());
-		assertEquals(fromService.getBic(), fromDatabase.getBic());
-		assertEquals(fromService.getCountry(), fromDatabase.getCountry());
-		assertEquals(fromService.getCodCompensacao(), fromDatabase.getCodCompensacao());
-	}
-
 }

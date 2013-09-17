@@ -50,7 +50,32 @@ public class Quote extends CascaioEntity {
 		return date;
 	}
 
-	public void setDate(DateTime date) {
-		this.date = date;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Quote)) return false;
+
+		Quote quote = (Quote) o;
+
+		if (!date.isEqual(quote.date)) return false;
+		if (price.compareTo(quote.price) != 0) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = date.hashCode();
+		result = 31 * result + price.hashCode();
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "Quote{" +
+				"date=" + date +
+				", price=" + price +
+				", entity=" + super.toString() +
+				'}';
 	}
 }

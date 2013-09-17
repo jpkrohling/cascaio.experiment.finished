@@ -22,7 +22,6 @@ public class CascaioBackendProperties {
 	private Properties properties;
 
 	public void loadProperties() {
-		Thread.dumpStack();
 		String decryptionKey = System.getenv("CASCAIO_BACKEND_DECRYPTION_KEY_PROPERTIES");
 
 		// fallback: system properties (like, -Dcascaio.....=bla)

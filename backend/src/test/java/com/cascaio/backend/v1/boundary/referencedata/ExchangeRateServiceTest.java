@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-
 import java.math.BigDecimal;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +30,7 @@ public class ExchangeRateServiceTest {
 		entityManager = entityManagerFactory.createEntityManager();
 
 		service.entityManager = entityManager;
-		service.logger = LoggerFactory.getLogger(FinancialInstitutionService.class);
+		service.logger = LoggerFactory.getLogger(ExchangeRateService.class);
 	}
 
 	@Test

@@ -35,6 +35,8 @@ public class CredentialsCheckerInterceptorTest {
 	public void setup() {
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("backend-unittest-pu");
 
+		System.setProperty("cascaio.backend.properties.filepath", "classpath:/cascaio.properties");
+
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 
 		UserContainer userContainer = new UserContainer();

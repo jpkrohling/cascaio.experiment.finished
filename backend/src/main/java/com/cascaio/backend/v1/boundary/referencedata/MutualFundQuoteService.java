@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -45,22 +46,51 @@ public class MutualFundQuoteService {
 	@Inject
 	Logger logger;
 
+	@Inject
+	MutualFundService mutualFundService;
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<MutualFundQuote> list() {
+	public List<MutualFundQuote> list(@QueryParam("fundId") String fundId,
+									  @QueryParam("isin") String isin) {
+
+		if ((null == isin || isin.isEmpty()) && (null == fundId || fundId.isEmpty())) {
+			throw new IllegalArgumentException("An ISIN or Mutual Fund ID is required when listing fund quotes");
+		}
+
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<MutualFundQuote> query = builder.createQuery(MutualFundQuote.class);
 
 		Root<MutualFundQuote> root = query.from(MutualFundQuote.class);
 		query.select(root);
+
+		MutualFund fund = null;
+		if (null != fundId && !fundId.isEmpty()) {
+			try {
+				fund = mutualFundService.get(fundId);
+			} catch (NoResultException nre) {
+				logger.error("Caller requested fund with ID {}", fundId);
+				return null;
+			}
+		}
+
+		if (null != isin && !isin.isEmpty()) {
+			fund = mutualFundService.getByIsin(isin);
+		}
+
+		if (null == fund) {
+			return null;
+		}
+
 		logger.trace("Listing all mutual fund quotes we have");
-		return entityManager.createQuery(query).getResultList();
+		return fund.getQuotes();
 	}
 
 	@Path("{id}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public MutualFundQuote get(@PathParam("id") String id) {
+	@ValidateRequest
+	public MutualFundQuote get(@NotNull @PathParam("id") String id) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<MutualFundQuote> query = builder.createQuery(MutualFundQuote.class);
 		Root<MutualFundQuote> root = query.from(MutualFundQuote.class);
@@ -86,35 +116,16 @@ public class MutualFundQuoteService {
 			Object[] values = new Object[]{isin, sQuote, sDate};
 			logger.trace("Asked to create an mutual fund quote for fund with ISIN {} on the amount {} for date {}", values);
 		}
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
-		CurrencyUnit currency = CurrencyUnit.of(sCurrency);
 		BigDecimal quote = new BigDecimal(sQuote);
 		DateTime date = DateMidnight.parse(sDate, inputDateFormat).toDateTime();
 
-		CriteriaQuery<MutualFund> queryFund = builder.createQuery(MutualFund.class);
-		Root<MutualFund> rootFund = queryFund.from(MutualFund.class);
-		queryFund.select(rootFund);
-		queryFund.where(
-				builder.equal(rootFund.get(MutualFund_.isin), isin)
-		);
-
-		List<MutualFund> funds = entityManager.createQuery(queryFund).getResultList();
-
-		if (funds.size() > 1) {
-			// something really wrong... ISIN is unique! No option, but to throw an exception
-			throw new IllegalStateException("Two or more funds share the same ISIN. This is a big problem. Contact the system administrator.");
+		MutualFund fund = mutualFundService.getByIsin(isin);
+		if (null == fund) {
+			fund = mutualFundService.create(isin, wkn, name, sCurrency);
 		}
 
-		MutualFund fund = null;
-		if (funds.size() == 0) {
-			fund = new MutualFund(name, isin, currency);
-			fund.setWkn(wkn);
-			entityManager.persist(fund);
-		} else {
-			fund = funds.get(0);
-		}
-
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<MutualFundQuote> query = builder.createQuery(MutualFundQuote.class);
 		Root<MutualFundQuote> root = query.from(MutualFundQuote.class);
 
@@ -126,7 +137,7 @@ public class MutualFundQuoteService {
 
 		if (entityManager.createQuery(query).getResultList().size() > 0) {
 			if (logger.isWarnEnabled()) {
-				logger.warn("We've seen a quote for {} on {} already. Ignoring request.", new Object[]{isin, date});
+				logger.info("We've seen a quote for {} on {} already. Ignoring request.", new Object[]{isin, date});
 			}
 			return null;
 		}
@@ -142,12 +153,10 @@ public class MutualFundQuoteService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ValidateRequest
 	public MutualFundQuote update(@PathParam("id") String id,
-							   @NumericRate @FormParam("rate") String sRate,
-							   @ISODate @FormParam("date") String sDate) {
+							   @NumericRate @FormParam("rate") String sRate) {
 		MutualFundQuote mutualFundQuote = get(id);
 
 		if (null != sRate && !sRate.isEmpty()) mutualFundQuote.setPrice(new BigDecimal(sRate));
-		if (null != sDate && !sDate.isEmpty()) mutualFundQuote.setDate(DateMidnight.parse(sDate, inputDateFormat).toDateTime());
 
 		entityManager.persist(mutualFundQuote);
 		logger.trace("Updated the mutual fund quote with ID {}", id);

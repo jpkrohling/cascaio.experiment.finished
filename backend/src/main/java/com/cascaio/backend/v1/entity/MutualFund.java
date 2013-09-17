@@ -76,4 +76,37 @@ public class MutualFund extends NamedCascaioEntity {
 	public void setCurrency(CurrencyUnit currency) {
 		this.currency = currency;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof MutualFund)) return false;
+
+		MutualFund fund = (MutualFund) o;
+
+		//if (currency != null ? !currency.equals(fund.currency) : fund.currency != null) return false;
+		if (isin != null ? !isin.equals(fund.isin) : fund.isin != null) return false;
+		if (wkn != null ? !wkn.equals(fund.wkn) : fund.wkn != null) return false;
+		return super.equals(o);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = isin != null ? isin.hashCode() : 0;
+		result = 31 * result + (wkn != null ? wkn.hashCode() : 0);
+		result = 31 * result + (currency != null ? currency.hashCode() : 0);
+		result = 31 * result + (quotes != null ? quotes.hashCode() : 0);
+		result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "MutualFund{" +
+				"isin='" + isin + '\'' +
+				", wkn='" + wkn + '\'' +
+				", currency=" + currency +
+				", named=" + super.toString() +
+				'}';
+	}
 }
