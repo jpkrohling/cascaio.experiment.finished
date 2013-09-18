@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
@@ -45,12 +46,25 @@ public class ExchangeRateService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<ExchangeRate> list() {
+	public List<ExchangeRate> list(@NotNull @Currency @FormParam("currencyFrom") String sCurrencyFrom,
+								   @NotNull @Currency @FormParam("currencyTo") String sCurrencyTo) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<ExchangeRate> query = builder.createQuery(ExchangeRate.class);
 
+		if ((null == sCurrencyFrom || sCurrencyFrom.isEmpty()) || (null == sCurrencyTo || sCurrencyTo.isEmpty())) {
+			throw new IllegalArgumentException("A pair of currencies is required to query the exchange rates.");
+		}
+
 		Root<ExchangeRate> root = query.from(ExchangeRate.class);
 		query.select(root);
+
+		CurrencyUnit currencyTo = CurrencyUnit.of(sCurrencyTo);
+		CurrencyUnit currencyFrom = CurrencyUnit.of(sCurrencyFrom);
+
+		query.where(
+				builder.equal(root.get(ExchangeRate_.currencyTo), currencyTo),
+				builder.equal(root.get(ExchangeRate_.currencyFrom), currencyFrom));
+
 		logger.trace("Listing all exchange rates we have");
 		return entityManager.createQuery(query).getResultList();
 	}
@@ -117,14 +131,14 @@ public class ExchangeRateService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ValidateRequest
 	public ExchangeRate update(@PathParam("id") String id,
-							   @Currency @FormParam("currencyFrom") String sCurrencyFrom,
-							   @Currency @FormParam("currencyTo") String sCurrencyTo,
-							   @NumericRate @FormParam("rate") String sRate) {
-		ExchangeRate exchangeRate = get(id);
+							   @NotNull @NumericRate @FormParam("rate") String sRate) {
 
-		if (null != sCurrencyFrom && !sCurrencyFrom.isEmpty()) exchangeRate.setCurrencyFrom(CurrencyUnit.of(sCurrencyFrom));
-		if (null != sCurrencyTo && !sCurrencyTo.isEmpty()) exchangeRate.setCurrencyTo(CurrencyUnit.of(sCurrencyTo));
-		if (null != sRate && !sRate.isEmpty()) exchangeRate.setPrice(new BigDecimal(sRate));
+		if (null == sRate || sRate.isEmpty()) {
+			throw new IllegalArgumentException("Parameter 'rate' is required for updating an exchange rate");
+		}
+
+		ExchangeRate exchangeRate = get(id);
+		exchangeRate.setPrice(new BigDecimal(sRate));
 
 		entityManager.persist(exchangeRate);
 		logger.trace("Updated the exchange rate with ID {}", id);
