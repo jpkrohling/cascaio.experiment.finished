@@ -9,9 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 

@@ -113,6 +113,7 @@ public class MutualFundService {
 	@ValidateRequest
 	public MutualFund update(@PathParam("id") String id,
 							 @FormParam("wkn") String wkn,
+							 @FormParam("name") String name,
 							 @Currency @FormParam("currency") String sCurrency) {
 		MutualFund fund = get(id);
 
@@ -123,6 +124,7 @@ public class MutualFundService {
 
 		if(null != wkn) fund.setWkn(wkn);
 		if(null != sCurrency) fund.setCurrency(currency);
+		if(null != name) fund.setName(name);
 
 		entityManager.persist(fund);
 		logger.trace("Updated the mutual fund with ID {}", id);
