@@ -7,7 +7,6 @@ import com.cascaio.backend.v1.control.validation.Country;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * User: jpkrohling

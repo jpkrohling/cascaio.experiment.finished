@@ -1,8 +1,8 @@
 package com.cascaio.backend.v1.boundary.referencedata;
 
+import com.cascaio.backend.v1.control.RequiresReferenceDataApplication;
 import com.cascaio.backend.v1.control.validation.Currency;
 import com.cascaio.backend.v1.control.validation.ISODate;
-import com.cascaio.backend.v1.control.RequiresReferenceDataApplication;
 import com.cascaio.backend.v1.control.validation.NumericRate;
 import com.cascaio.backend.v1.entity.ExchangeRate;
 import com.cascaio.backend.v1.entity.ExchangeRate_;
@@ -19,7 +19,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;

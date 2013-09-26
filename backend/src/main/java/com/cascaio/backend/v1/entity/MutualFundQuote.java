@@ -2,7 +2,6 @@ package com.cascaio.backend.v1.entity;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;

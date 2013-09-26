@@ -2,7 +2,6 @@ package com.cascaio.backend.v1.entity;
 
 import org.joda.money.CurrencyUnit;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

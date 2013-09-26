@@ -3,7 +3,6 @@ package com.cascaio.backend.v1.entity;
 import org.joda.money.CurrencyUnit;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;

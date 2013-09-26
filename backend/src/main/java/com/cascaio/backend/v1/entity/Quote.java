@@ -1,7 +1,6 @@
 package com.cascaio.backend.v1.entity;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
