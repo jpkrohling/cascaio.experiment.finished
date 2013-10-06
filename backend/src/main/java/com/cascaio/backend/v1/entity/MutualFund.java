@@ -1,10 +1,12 @@
 package com.cascaio.backend.v1.entity;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.joda.money.CurrencyUnit;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +33,7 @@ public class MutualFund extends NamedCascaioEntity {
 	private CurrencyUnit currency;
 
 	@OneToMany(mappedBy = "mutualFund", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<MutualFundQuote> quotes = new ArrayList<>();
 
 	protected MutualFund() {

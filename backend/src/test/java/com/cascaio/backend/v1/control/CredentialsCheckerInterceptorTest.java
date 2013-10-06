@@ -94,6 +94,7 @@ public class CredentialsCheckerInterceptorTest {
 		HttpHeaders headers = mock(HttpHeaders.class);
 		List valuesForKey = mock(List.class);
 		List valuesForToken = mock(List.class);
+		List valuesForTimestamp = mock(List.class);
 
 		credentialsCheckerInterceptor.clientRequest = clientRequest;
 
@@ -102,10 +103,19 @@ public class CredentialsCheckerInterceptorTest {
 		when(httpRequest.getHttpHeaders()).thenReturn(headers);
 		when(clientResponse.getStatus()).thenReturn(200);
 		when(clientResponse.getEntity()).thenReturn(application);
+
 		when(headers.getRequestHeader("X-Cascaio-AccessKey")).thenReturn(valuesForKey);
 		when(headers.getRequestHeader("X-Cascaio-Token")).thenReturn(valuesForToken);
+		when(headers.getRequestHeader("X-Cascaio-Timestamp")).thenReturn(valuesForTimestamp);
+
+		when(valuesForKey.size()).thenReturn(1);
 		when(valuesForKey.get(0)).thenReturn("fake-access-key");
+
 		when(valuesForToken.get(0)).thenReturn("fake-token");
+		when(valuesForToken.size()).thenReturn(1);
+
+		when(valuesForTimestamp.get(0)).thenReturn(String.valueOf(System.currentTimeMillis()));
+		when(valuesForTimestamp.size()).thenReturn(1);
 
 		return credentialsCheckerInterceptor.preProcess(httpRequest, resourceMethod);
 	}

@@ -51,8 +51,6 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 
 	@Override
 	public ServerResponse preProcess(HttpRequest request, ResourceMethod method) throws Failure, WebApplicationException {
-		long timeRequestStarted = System.currentTimeMillis();
-
 		// is the requester trying to access a reference data endpoint, or user data endpoint?
 		boolean requiresReferenceDataPermission = false;
 		Annotation[] annotations = method.getResourceClass().getDeclaredAnnotations();
@@ -62,7 +60,7 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 			}
 		}
 
-		Application application = retrieveApplication(request, timeRequestStarted);
+		Application application = retrieveApplication(request);
 		if (null == application) {
 			logger.trace("Couldn't determine what is the application in use for this request.");
 			return ServerResponse.copyIfNotServerResponse(Response.status(Response.Status.UNAUTHORIZED).build());
@@ -94,14 +92,19 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 		return ServerResponse.copyIfNotServerResponse(Response.status(Response.Status.FORBIDDEN).build());
 	}
 
-	private Application retrieveApplication(HttpRequest request, long time) {
+	private Application retrieveApplication(HttpRequest request) {
 
 		String accessKey = getValueForHeader(request, "X-Cascaio-AccessKey");
 		String token = getValueForHeader(request, "X-Cascaio-Token");
+		String timestamp = getValueForHeader(request, "X-Cascaio-Timestamp");
 
 		if (null == accessKey || null == token) {
 			logger.warn("Access key and/or token were null.");
 			return null;
+		}
+
+		if (null == timestamp) {
+			timestamp = String.valueOf(System.currentTimeMillis());
 		}
 
 		ClientRequest req = getClientRequest();
@@ -109,7 +112,7 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 				.header("X-Cascaio-AccessKey", properties.getProperty("cascaio.backend.appinfo.accesskey"))
 				.pathParameter("accessKey", accessKey)
 				.queryParameter("token", token)
-				.queryParameter("time", time);
+				.queryParameter("time", timestamp);
 
 		ClientResponse<Application> res = null;
 		try {
@@ -147,6 +150,12 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 			logger.warn("Header {} was null", header);
 			return null;
 		}
+
+		if (headers.size() == 0) {
+			logger.trace("The header {} was not sent.", header);
+			return null;
+		}
+
 		String headerValue = headers.get(0);
 
 		if (null == headerValue || headerValue.isEmpty()) {

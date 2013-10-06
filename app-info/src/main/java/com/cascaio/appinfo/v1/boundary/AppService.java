@@ -131,8 +131,8 @@ public class AppService {
 			return true;
 		} else {
 			logger.trace(
-					"TOTP was not a match: {} was sent, {} or {} were possibilities",
-					new String[]{token, current, previous}
+					"TOTP was not a match: {} was sent, {} or {} were possibilities for timestamp {}",
+					new String[]{token, current, previous, String.valueOf(time)}
 			);
 			return false;
 		}
