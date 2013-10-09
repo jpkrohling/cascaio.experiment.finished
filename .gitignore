@@ -3,3 +3,4 @@ properties/*.properties
 *sql
 target
 .idea
+atlassian-ide-plugin.xml

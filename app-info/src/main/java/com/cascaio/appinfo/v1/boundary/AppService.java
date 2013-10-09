@@ -4,6 +4,7 @@ import com.cascaio.appinfo.v1.entity.Application;
 import com.cascaio.appinfo.v1.entity.ApplicationType;
 import com.cascaio.security.KeyGenerator;
 import com.cascaio.security.TOTP;
+import org.infinispan.Cache;
 import org.jasypt.digest.StringDigester;
 import org.slf4j.Logger;
 
@@ -35,6 +36,10 @@ public class AppService {
 	@Inject
 	StringDigester passwordDigester;
 
+
+    @Inject
+    Cache<String, Application> applicationCache;
+
 	/**
 	 * A GET request to this endpoint needs an access key and a token, which should render a valid known application
 	 * to our system.
@@ -57,19 +62,23 @@ public class AppService {
 						@QueryParam("time") long time) {
 
 		if (null == accessKey || accessKey.isEmpty()) {
+			logger.trace("Access key is empty or null. Bad request.");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 
 		if (null == token || token.isEmpty()) {
+			logger.trace("Token is empty or null. Bad request.");
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 
 		Application application = retrieveApplication(accessKey);
 		if (null == application) {
+			logger.trace("Application with access key {} not found.", accessKey);
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 
 		if (!isValidTOTP(application.getSecretKey(), token, time)) {
+			logger.trace("TOTP not valid. Unauthorized.");
 			return Response.status(Response.Status.UNAUTHORIZED).build();
 		}
 
@@ -145,6 +154,18 @@ public class AppService {
 	 * @return An Application object
 	 */
 	private Application retrieveApplication(String accessKey) {
+        Application application = null;
+
+        if (null != applicationCache) {
+            logger.trace("Trying to retrieve application with access key {} from the cache.", accessKey);
+            application = applicationCache.get(accessKey);
+        }
+
+        if (null != application) {
+            logger.trace("Got application {} from the cache.", application.getName());
+            return application;
+        }
+
 		// This is a contention point!!!
 		// We are storing the access key as a strong password in the DB, and we can't just check the checksum,
 		// as Jasypt's password encryption generates a digest which is not the same every time, but two digests can be
@@ -158,7 +179,6 @@ public class AppService {
 		Root<Application> root = query.from(Application.class);
 		query.select(root);
 		List<Application> applicationList = entityManager.createQuery(query).getResultList();
-		Application application = null;
 		for (Application a : applicationList) {
 			String[] accesskeys = {accessKey, a.getAccessKey()};
 			logger.trace("Comparing accesskey {} with this entry from the database: {}", accesskeys);
@@ -168,6 +188,11 @@ public class AppService {
 			}
 		}
 		// end of the contention point :-)
+
+        if (null != applicationCache) {
+            logger.trace("Adding application with access key {} to the cache.", accessKey);
+            applicationCache.put(accessKey, application);
+        }
 
 		return application;
 	}

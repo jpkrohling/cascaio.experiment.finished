@@ -64,6 +64,11 @@
 			<artifactId>validation-api</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-core</artifactId>
+		</dependency>
+
 		<!-- We need the @Type annotation from this -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -140,7 +145,18 @@
 					</compilerArguments>
 				</configuration>
 			</plugin>
-		</plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Dependencies>org.infinispan export</Dependencies>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 </project>
 
