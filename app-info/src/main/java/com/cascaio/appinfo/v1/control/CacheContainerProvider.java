@@ -9,7 +9,6 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
 /**
@@ -33,7 +32,7 @@ public class CacheContainerProvider {
 
 	@Produces
 	public Cache<String, Application> getApplicationCache() {
-        return applicationCache;
+		return applicationCache;
 	}
 
 	@PreDestroy

@@ -37,8 +37,8 @@ public class AppService {
 	StringDigester passwordDigester;
 
 
-    @Inject
-    Cache<String, Application> applicationCache;
+	@Inject
+	Cache<String, Application> applicationCache;
 
 	/**
 	 * A GET request to this endpoint needs an access key and a token, which should render a valid known application
@@ -85,53 +85,53 @@ public class AppService {
 		return Response.ok(application).build();
 	}
 
-    /**
-     * Creates a new application, based on the application name and type. Generates a new accessKey and secretKey
-     * for this application, and returns both. The plain access key is available only during this call, so, the caller
-     * has to make sure to securely store this information on their side, as this is hashed on our side.
-     *
-     * @param name The application's name
-     * @param applicationType The type of the application, as string. The values are a 1-1 match with the
-     *                        enum ApplicationType
-     * @return A Bad Request if the name or applicationType is empty, or if the applicationType is not valid as per
-     * the enum. Returns a 200 OK with the Application in JSON format if the registration was successful.
-     */
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@FormParam("name") String name, @FormParam("applicationType") String applicationType) {
-        String accessKey = KeyGenerator.generate();
-        String secretKey = KeyGenerator.generate();
+	/**
+	 * Creates a new application, based on the application name and type. Generates a new accessKey and secretKey
+	 * for this application, and returns both. The plain access key is available only during this call, so, the caller
+	 * has to make sure to securely store this information on their side, as this is hashed on our side.
+	 *
+	 * @param name The application's name
+	 * @param applicationType The type of the application, as string. The values are a 1-1 match with the
+	 *                        enum ApplicationType
+	 * @return A Bad Request if the name or applicationType is empty, or if the applicationType is not valid as per
+	 * the enum. Returns a 200 OK with the Application in JSON format if the registration was successful.
+	 */
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response create(@FormParam("name") String name, @FormParam("applicationType") String applicationType) {
+		String accessKey = KeyGenerator.generate();
+		String secretKey = KeyGenerator.generate();
 
-        if (null == name || name.isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+		if (null == name || name.isEmpty()) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
 
-        if (null == applicationType || applicationType.isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+		if (null == applicationType || applicationType.isEmpty()) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
 
-        ApplicationType type = null;
-        try {
-            type = ApplicationType.valueOf(applicationType);
-        } catch (IllegalArgumentException iae) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+		ApplicationType type = null;
+		try {
+			type = ApplicationType.valueOf(applicationType);
+		} catch (IllegalArgumentException iae) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
 
-        Application application = new Application(name, accessKey, secretKey, type);
+		Application application = new Application(name, accessKey, secretKey, type);
 
-        entityManager.persist(application);
+		entityManager.persist(application);
 
-        return Response.ok(application).build();
-    }
+		return Response.ok(application).build();
+	}
 
-    /**
-     * Determines whether a given token is valid for the given secret key or not. Valid values are the current
-     * value for the TOTP and the previous one.
-     *
-     * @param secretKey The application-specific secret key
-     * @param token The TOTP-based token
-     * @return true when the token is a valid token for the secret key
-     */
+	/**
+	 * Determines whether a given token is valid for the given secret key or not. Valid values are the current
+	 * value for the TOTP and the previous one.
+	 *
+	 * @param secretKey The application-specific secret key
+	 * @param token The TOTP-based token
+	 * @return true when the token is a valid token for the secret key
+	 */
 	private boolean isValidTOTP(String secretKey, String token, long time) {
 		String current = TOTP.currentTOTPForKey(secretKey, time);
 		String previous = TOTP.previousTOTPForKey(secretKey, time);
@@ -154,17 +154,17 @@ public class AppService {
 	 * @return An Application object
 	 */
 	private Application retrieveApplication(String accessKey) {
-        Application application = null;
+		Application application = null;
 
-        if (null != applicationCache) {
-            logger.trace("Trying to retrieve application with access key {} from the cache.", accessKey);
-            application = applicationCache.get(accessKey);
-        }
+		if (null != applicationCache) {
+			logger.trace("Trying to retrieve application with access key {} from the cache.", accessKey);
+			application = applicationCache.get(accessKey);
+		}
 
-        if (null != application) {
-            logger.trace("Got application {} from the cache.", application.getName());
-            return application;
-        }
+		if (null != application) {
+			logger.trace("Got application {} from the cache.", application.getName());
+			return application;
+		}
 
 		// This is a contention point!!!
 		// We are storing the access key as a strong password in the DB, and we can't just check the checksum,
@@ -189,10 +189,10 @@ public class AppService {
 		}
 		// end of the contention point :-)
 
-        if (null != applicationCache) {
-            logger.trace("Adding application with access key {} to the cache.", accessKey);
-            applicationCache.put(accessKey, application);
-        }
+		if (null != applicationCache) {
+			logger.trace("Adding application with access key {} to the cache.", accessKey);
+			applicationCache.put(accessKey, application);
+		}
 
 		return application;
 	}
