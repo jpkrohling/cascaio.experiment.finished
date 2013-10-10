@@ -18,6 +18,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: jpkrohling
@@ -38,7 +39,7 @@ public class AppService {
 
 
 	@Inject
-	Cache<String, Application> applicationCache;
+	Map<String, Application> applicationCache;
 
 	/**
 	 * A GET request to this endpoint needs an access key and a token, which should render a valid known application

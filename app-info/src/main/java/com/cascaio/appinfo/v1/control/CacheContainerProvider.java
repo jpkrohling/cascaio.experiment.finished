@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.inject.Produces;
+import java.util.Map;
 
 /**
  * User: jpkrohling
@@ -22,7 +23,7 @@ public class CacheContainerProvider {
 
 	@Resource(lookup="java:jboss/infinispan/container/cascaio")
 	private CacheContainer container;
-	private Cache<String, Application> applicationCache;
+	private Map<String, Application> applicationCache;
 	private static final String APP_CACHE_NAME="cascaio-application-cache";
 
 	@PostConstruct()
@@ -31,7 +32,7 @@ public class CacheContainerProvider {
 	}
 
 	@Produces
-	public Cache<String, Application> getApplicationCache() {
+	public Map<String, Application> getApplicationCache() {
 		return applicationCache;
 	}
 
