@@ -1,10 +1,16 @@
 package com.cascaio.backend.v1.control;
 
 import com.cascaio.backend.v1.entity.Application;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.jboss.resteasy.annotations.interception.Precedence;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
+import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
@@ -34,6 +40,9 @@ import java.util.Properties;
 public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 	private static final String USER_DATA_APPLICATION_TYPE = "USER_DATA";
 	private static final String REFERENCE_DATA_APPLICATION_TYPE = "REFERENCE_DATA";
+	private static final ClientConnectionManager CONNECTION_MANAGER = new PoolingClientConnectionManager();
+	private static final HttpClient HTTP_CLIENT = new DefaultHttpClient(CONNECTION_MANAGER);
+	private static final ClientExecutor CLIENT_EXECUTOR = new ApacheHttpClient4Executor(HTTP_CLIENT);
 
 	@Inject
 	EntityManager entityManager;
@@ -139,7 +148,7 @@ public class CredentialsCheckerInterceptor implements PreProcessInterceptor {
 
 	private ClientRequest getClientRequest() {
 		if (null == this.clientRequest) {
-			this.clientRequest = new ClientRequest(properties.getProperty("cascaio.backend.appinfo.endpoint"));
+			this.clientRequest = new ClientRequest(properties.getProperty("cascaio.backend.appinfo.endpoint"), CLIENT_EXECUTOR);
 		}
 		return this.clientRequest;
 	}

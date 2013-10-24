@@ -113,6 +113,18 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Testing dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -158,6 +170,16 @@
 					<compilerArguments>
 						<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
 					</compilerArguments>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Dependencies>org.apache.httpcomponents</Dependencies>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>
